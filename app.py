@@ -4,29 +4,57 @@ from sentence_transformers import SentenceTransformer
 
 indexName = "offer_search"
 
-# try:
-#     es = Elasticsearch(
-#     "https://localhost:9200",
-#     basic_auth=("elastic", "gPGfLN4NpDY*uKdLzwM1"),
-#     ca_certs="/Users/akhilgurrapu/Documents/elasticsearch/config/certs/http_ca.crt"
-#     )
+def create_es_index(es_client):
+    # Define index mappings
+    indexMapping = {
+        "properties": {
+            "Offer": {
+                "type": "text"
+            },
+            "Brand": {
+                "type": "text"
+            },
+            "Category": {
+                "type": "text"
+            },
+            "Retailer": {
+                "type": "text"
+            },
+            "BRANDVECTOR": {
+                "type": "dense_vector",
+                "dims": 768,
+                "index": True,
+                "similarity": "l2_norm"
+            },
+            "CATEGORYVECTOR": {
+                "type": "dense_vector",
+                "dims": 768,
+                "index": True,
+                "similarity": "l2_norm"
+            },
+            "RETAILERVECTOR": {
+                "type": "dense_vector",
+                "dims": 768,
+                "index": True,
+                "similarity": "l2_norm"
+            }
+        }
+    }
+    # Create the index if it doesn't exist
+    if not es_client.indices.exists(index=indexName):
+        es_client.indices.create(index=indexName, mappings=indexMapping)
 
-# except ConnectionError as e:
-#     print("Connection Error:", e)
-    
-# if es.ping():
-#     print("Succesfully connected to ElasticSearch!!")
-# else:
-#     print("Oops!! Can not connect to Elasticsearch!")
-
+# Initialize Elasticsearch client
 try:
     es = Elasticsearch(
         "https://localhost:9200",
-        basic_auth=("elastic", "gPGfLN4NpDY*uKdLzwM1"),
-        ca_certs="/Users/akhilgurrapu/Documents/elasticsearch/config/certs/http_ca.crt"
-        )
+        basic_auth=("elastic", "password"),
+        ca_certs="path to http_ca.crt"
+    )
     if not es.ping():
         st.error("Cannot connect to Elasticsearch!")
+    else:
+        create_es_index(es)
 except Exception as e:
     st.error(f"Connection Error: {e}")
 
