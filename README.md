@@ -87,6 +87,12 @@ streamlit run app.py
 
 The app will typically run at 'http://localhost:8501'. Open this address in a web browser.
 
+### Screenshots
+![Streamlit Application Interface](images/1.png)
+![Streamlit Application Interface](images/2.png)
+![Streamlit Application Interface](images/3.png)
+![Streamlit Application Interface](images/4.png)
+
 ### Using the App
 
 Input your search query.
