@@ -5,7 +5,7 @@ from sentence_transformers import SentenceTransformer
 indexName = "offer_search"
 
 def create_es_index(es_client):
-    # Define index mappings
+    # Defining index mappings
     indexMapping = {
         "properties": {
             "Offer": {
@@ -44,7 +44,7 @@ def create_es_index(es_client):
     if not es_client.indices.exists(index=indexName):
         es_client.indices.create(index=indexName, mappings=indexMapping)
 
-# Initialize Elasticsearch client
+# Initializing Elasticsearch client
 try:
     es = Elasticsearch(
         "https://localhost:9200",
@@ -64,7 +64,7 @@ def search(input_keyword):
     
     vector_of_input_query = model.encode(input_keyword)
 
-    # Perform KNN search for BrandVector
+    # Performing KNN search for BrandVector
     brand_query = {
         "field": "BRANDVECTOR",
         "query_vector": vector_of_input_query,
@@ -73,7 +73,7 @@ def search(input_keyword):
     }
     brand_hits = es.knn_search(index="offer_search", knn=brand_query, _source=["OFFER", 'BRAND'])["hits"]["hits"]
 
-    # Perform KNN search for CategoryVector
+    # Performing KNN search for CategoryVector
     category_query = {
         "field": "CATEGORYVECTOR",
         "query_vector": vector_of_input_query,
@@ -82,7 +82,7 @@ def search(input_keyword):
     }
     category_hits = es.knn_search(index="offer_search", knn=category_query, _source=["OFFER","CATEGORY"])["hits"]["hits"]
 
-    # Perform KNN search for RetailerVector
+    # Performing KNN search for RetailerVector
     retailer_query = {
         "field": "RETAILERVECTOR",
         "query_vector": vector_of_input_query,
@@ -91,7 +91,7 @@ def search(input_keyword):
     }
     retailer_hits = es.knn_search(index="offer_search", knn=retailer_query, _source=["OFFER","RETAILER"])["hits"]["hits"]
 
-    # Combine results from all three searches
+    # Combining results from all three searches
     combined_results = brand_hits + category_hits + retailer_hits
 
     aggregated_results = {}
@@ -107,7 +107,7 @@ def search(input_keyword):
             aggregated_results[doc_id]["score"] += hit['_score']
             aggregated_results[doc_id]["count"] += 1
 
-    # Normalize scores by count and sort the results
+    # Normalizes scores by count and sort the results
     final_results = sorted(aggregated_results.values(), key=lambda x: x["score"] / x["count"], reverse=True)
     return [result for result in final_results]
 
