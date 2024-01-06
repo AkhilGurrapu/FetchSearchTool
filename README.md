@@ -23,8 +23,8 @@ This application is a Streamlit-based search engine that leverages Elasticsearch
 Clone the GitHub repository to your local system:
 
 ```bash
-git clone [repository URL](https://github.com/AkhilGurrapu/FetchSearchTool.git)
-cd [repository directory](https://github.com/AkhilGurrapu/FetchSearchTool.git)
+git clone https://github.com/AkhilGurrapu/FetchSearchTool.git
+cd FetchSearchTool
 ```
 
 
